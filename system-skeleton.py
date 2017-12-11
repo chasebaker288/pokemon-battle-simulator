@@ -2,12 +2,13 @@ from random import randint
 
 
 class Referee:
-	def __init__(self, red_team=(battler_red1), blue_team=(battler_blue1)):
+	"""Handles things like turn order, weather, etc."""
+	def __init__(self, red_team=(battler_red1), blue_team=(battler_blue1)):  # Take each player's team as input?
 		pass
 
 
 class Battler:
-	def __init__(self, species=species_snorlax, level=50, gender=randint(0, 8), ability=randint(0,9), nature=randint(0, 24), ivs=(randint(0, 31), randint(0, 31), randint(0, 31), randint(0, 31), randint(0, 31), randint(0, 31)), evs=(0,0,0,0,0,0), moveset=(move_tackle, move_none, move_none, move_none), item=item_none):
+	def __init__(self, species=species_snorlax, level=50, gender=randint(1, 8), ability=randint(0,4), nature=randint(0, 24), ivs=(randint(0, 31), randint(0, 31), randint(0, 31), randint(0, 31), randint(0, 31), randint(0, 31)), evs=(0,0,0,0,0,0), moveset=(move_tackle, move_none, move_none, move_none), item=item_none):
 		self.name = species.name
 		self.level = level
 		self.gender = species.gender(gender)
@@ -36,7 +37,8 @@ class Battler:
 		self.moves = moveset
 
 	def attack(self, move=0):
-		"""Data is parsed/calculated by Referee object"""
+		"""Data is sent to enemy, who then calculates actual damage taken.
+			Still needs critical hit mechanic."""
 		if self.PPs[move] < 1:
 			return "No PP left!"
 		else:
@@ -65,6 +67,7 @@ class Battler:
 				return [int(damage), self.moves[move].attacktype, self.moves[move].accuracy, self.stage_accuracy, physical]
 
 	def get_hit(self, damage, attacktype, move_accuracy, mon_accuracy, physical):
+		"""Calculates how much damage is actually taken."""
 		if physical:
 			stat = self.defense
 			stage = self.stage_defense
@@ -97,8 +100,35 @@ class Battler:
 
 
 class Species:
-	def __init__(self):
-		pass
+	def __init__(self, name="SNORLAX", type1=type_normal, type2=type_none, abilities=(ability_immunity, ability_thickfat, ability_gluttony), genderratio=(7,8), stats=(160,110,65,65,110,30)):
+		self.name = name
+		self.type1 = type1
+		self.type2 = type2
+		self.ability1 = abilities[0]
+		self.ability2 = abilities[1]
+		self.ability3 = abilities[2]
+		self.HP = stats[0]
+		self.attack = stats[1]
+		self.defense = stats[2]
+		self.sattack = stats[3]
+		self.sdefense = stats[4]
+		self.speed = stats[5]
+		
+	def gender(self, value):
+		if genderratio[1] == 0:
+			return "None"
+		elif value > genderratio[0]:
+			return "Female"
+		else:
+			return "Male"
+
+	def ability(self, value):
+		if value == 4 and self.ability3 != ability_none:
+			return self.ability3
+		elif value >= 2 and self.ability2 != ability_none:
+			return self.ability2
+		else:
+			return self.ability1
 
 
 class Move:
@@ -107,11 +137,7 @@ class Move:
 
 
 class Ability:
-	def __init__(self):
-		pass
-
-
-class Personality:
+	"""This one's going to be a doozy."""
 	def __init__(self):
 		pass
 
