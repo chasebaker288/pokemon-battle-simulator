@@ -1,2 +1,2 @@
 # pokemon-battle-simulator
-An experiment / exercise in software architecture.
+An experiment / exercise in self-directed software architecture.
